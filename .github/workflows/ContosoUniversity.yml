@@ -9,13 +9,12 @@ on:
       - '**/ContosoUniversity - Infra.yml'
       - '**/README.md'
   pull_request:
-    branches: 
+    branches:
       - main
     paths-ignore:
       - 'infra/**'
-# We also want to be able to run this manually from Github
   workflow_dispatch:
-  
+
 env:
   CONFIGURATION: release
   AZ_APP_NAME: ${{ secrets.AZURE_ENVIRONMENT_NAME }}-app
@@ -23,57 +22,54 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-    
-    - name: Setup .NET Core SDK
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '6.0.x'
-    
-    - name: Restore
-      run: dotnet restore src/ContosoUniversity.sln
-    
-    - name: Build
-      run: dotnet build src/ContosoUniversity.sln --configuration ${{ env.CONFIGURATION }} --no-restore
-    
-    - name: Test
-      run: dotnet test src/ContosoUniversity.Test/ContosoUniversity.Test.csproj --verbosity normal --logger trx --results-directory TestResults
+      - uses: actions/checkout@v4
       
-    - name: Publish APP
-      run: dotnet publish --configuration ${{ env.CONFIGURATION }} --output PublishApp src/ContosoUniversity.WebApplication/ContosoUniversity.WebApplication.csproj
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x'
+      
+      - name: Restore
+        run: dotnet restore src/ContosoUniversity.sln
+      
+      - name: Build
+        run: dotnet build src/ContosoUniversity.sln --configuration ${{ env.CONFIGURATION }} --no-restore
+      
+      - name: Test
+        run: dotnet test src/ContosoUniversity.Test/ContosoUniversity.Test.csproj --verbosity normal --logger trx --results-directory TestResults
+        
+      - name: Publish APP
+        run: dotnet publish --configuration ${{ env.CONFIGURATION }} --output PublishApp src/ContosoUniversity.WebApplication/ContosoUniversity.WebApplication.csproj
 
-    - name: Publish API
-      run: dotnet publish --configuration ${{ env.CONFIGURATION }} --output PublishApi src/ContosoUniversity.API/ContosoUniversity.API.csproj
-    
-    - name: Upload APP results
-      uses: actions/upload-artifact@v2
-      with:
-        name: app
-        path: PublishApp
-    
-    - name: Upload API results
-      uses: actions/upload-artifact@v2
-      with:
-        name: api
-        path: PublishApi
-  
+      - name: Publish API
+        run: dotnet publish --configuration ${{ env.CONFIGURATION }} --output PublishApi src/ContosoUniversity.API/ContosoUniversity.API.csproj
+      
+      - name: Upload APP results
+        uses: actions/upload-artifact@v4
+        with:
+          name: app
+          path: PublishApp
+      
+      - name: Upload API results
+        uses: actions/upload-artifact@v4
+        with:
+          name: api
+          path: PublishApi
+
   release:
     needs: build
     runs-on: ubuntu-latest
-
     steps:
       - name: Download APP Artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: app
           path: app-artifact
       
       - name: Download API Artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: api
           path: api-artifact
