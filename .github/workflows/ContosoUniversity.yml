@@ -34,7 +34,6 @@ jobs:
       - name: Restore
         run: dotnet restore src/ContosoUniversity.sln
 
-      
       - name: Build
         run: dotnet build --configuration Release
         working-directory: src
