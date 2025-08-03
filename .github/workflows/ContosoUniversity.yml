@@ -36,7 +36,9 @@ jobs:
 
       
       - name: Build
-        run: dotnet build src/ContosoUniversity.sln --configuration Release
+        run: dotnet build --configuration Release
+        working-directory: src
+
 
       - name: Test
         run: dotnet test src/ContosoUniversity.Test/ContosoUniversity.Test.csproj --verbosity normal --logger trx --results-directory TestResults
