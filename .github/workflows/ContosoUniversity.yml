@@ -33,6 +33,7 @@ jobs:
       
       - name: Restore
         run: dotnet restore src/ContosoUniversity.sln
+
       
       - name: Build
         run: dotnet build src/ContosoUniversity.sln --configuration Release
